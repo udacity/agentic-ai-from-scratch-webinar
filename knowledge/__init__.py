@@ -1,0 +1,13 @@
+"""Shared application knowledge used by multiple agents."""
+
+from knowledge.housing import (
+    AUSTIN_NEIGHBORHOOD_KNOWLEDGE,
+    HOUSING_RECOMMENDATION_KNOWLEDGE,
+    HOUSING_RECOMMENDATION_RULES,
+)
+
+__all__ = [
+    "AUSTIN_NEIGHBORHOOD_KNOWLEDGE",
+    "HOUSING_RECOMMENDATION_KNOWLEDGE",
+    "HOUSING_RECOMMENDATION_RULES",
+]

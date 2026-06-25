@@ -5,7 +5,7 @@ from services.azure_llm import AzureLLMClient
 
 def main():
     llm = AzureLLMClient()
-    messages = [
+    austin_messages = [
         {
             "role": "user",
             "content": "I accepted a job in Austin, Texas. Where should I live?",
@@ -13,19 +13,35 @@ def main():
     ]
 
     print(f"\n{'=' * 60}")
-    print("STEP 1: BUILD THE MESSAGE")
+    print("STEP 1: ASK ABOUT OUR AUSTIN RELOCATION USE CASE")
     print("=" * 60)
-    print(messages)
+    print(austin_messages)
+
+    austin_answer = llm.chat(austin_messages)
+    print(f"\nLLM: {austin_answer}")
+
+    cake_messages = [
+        {
+            "role": "user",
+            "content": "How do I bake a cake?",
+        }
+    ]
 
     print(f"\n{'=' * 60}")
-    print("STEP 2: SEND MESSAGE TO THE LLM")
+    print("STEP 2: ASK SOMETHING OUTSIDE OUR USE CASE")
     print("=" * 60)
-    answer = llm.chat(messages)
+    print(cake_messages)
+
+    cake_answer = llm.chat(cake_messages)
+    print(f"\nLLM: {cake_answer}")
 
     print(f"\n{'=' * 60}")
-    print("STEP 3: LLM RESPONSE")
+    print("STEP 3: OBSERVE THE LACK OF SCOPE")
     print("=" * 60)
-    print(answer)
+    print(
+        "The LLM answered both questions because we have not given it a persona, "
+        "domain boundary, or trusted application knowledge."
+    )
 
 
 if __name__ == "__main__":

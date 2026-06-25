@@ -2,6 +2,7 @@
 
 import json
 
+from knowledge import HOUSING_RECOMMENDATION_KNOWLEDGE
 from tools.housing_search import search_listings
 
 
@@ -9,16 +10,13 @@ class HousingAgent:
     """A small agent made from persona, knowledge, tools, and memory."""
 
     PERSONA = (
-        "You are Riley, a practical and encouraging Austin housing agent. "
+        "You are Becky, a practical and encouraging Austin housing agent. "
         "You recommend homes that match the user's needs, explain tradeoffs, "
         "and clearly identify facts the user should verify."
     )
 
-    KNOWLEDGE = [
-        "A housing recommendation should consider budget, bedrooms, and location.",
-        "Rent and availability can change and must be verified before signing a lease.",
-        "The agent may only claim listing facts returned by its tools.",
-    ]
+    # Shared knowledge can be reused by agents with different roles.
+    KNOWLEDGE = HOUSING_RECOMMENDATION_KNOWLEDGE
 
     MEMORY_POLICY = (
         "When the current request refers to information shared earlier, inspect "
@@ -49,6 +47,9 @@ class HousingAgent:
 
     def decide(self, request, observations):
         """Choose the next action; the external runtime executes it."""
+        # Decide: the model chooses the next step, but does not execute it.
+        # With no observations, it should ask for a tool. With observations, it
+        # should finish with an answer grounded in the tool result.
         if observations:
             guidance = "The search is complete. Choose finish using the observation."
         else:
@@ -64,6 +65,8 @@ class HousingAgent:
                         "# Available actions\n"
                         '1. {"action":"search_listings","arguments":{"max_rent":2500}}\n'
                         '2. {"action":"finish","answer":"your recommendation"}\n\n'
+                        "When the goal includes a maximum rent, use that exact value "
+                        "for search_listings. "
                         "Return exactly one JSON object and no Markdown. "
                         "Never invent a tool name or listing fact."
                     ),
@@ -97,7 +100,7 @@ class HousingAgent:
             print(f"\n[Goal] {request}")
             print(f"[Memory read] Prior memory before this request: {prior_memory}")
 
-        # 1. Remember the user's current request.
+        # Goal: remember the user's current request.
         user_event = {
             "role": "user",
             "content": request,
@@ -107,14 +110,14 @@ class HousingAgent:
         if trace:
             print(f"[Memory write] Stored user event: {user_event}")
 
-        # 2. Use a tool to obtain facts the model does not already know.
+        # Act: use a tool to obtain facts the model does not already know.
         if trace:
             print(f"[Tool call] search_listings(max_rent={max_rent})")
         matches = self.tools["search_listings"](max_rent)
         if trace:
             print(f"[Tool observation] {matches}")
 
-        # 3. Give the model its persona, knowledge, memory, and tool results.
+        # Observe -> Finish: give the model the tool results so it can answer.
         if trace:
             print(f"[Memory read] Sending prior memory to the model: {prior_memory}")
             print("[Model call] Sending persona, knowledge, memory, and tool results")
@@ -126,7 +129,9 @@ class HousingAgent:
                         f"# Persona\n{self.PERSONA}\n\n"
                         f"# Knowledge\n- " + "\n- ".join(self.KNOWLEDGE) + "\n\n"
                         f"# Memory policy\n{self.MEMORY_POLICY}\n\n"
-                        "Use only facts from Prior memory and Tool results. Do not "
+                        "Use only facts from the Current request, Knowledge, Prior "
+                        "memory, and Tool results. "
+                        "Do not "
                         "invent neighborhood qualities, schools, amenities, contact "
                         "details, or actions you cannot perform."
                     ),
