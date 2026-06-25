@@ -4,7 +4,7 @@ This one-hour webinar builds an agentic home-finding workflow with plain Python 
 
 The only non-standard packages are the clients needed to reach Azure Key Vault and Azure OpenAI. Routing, memory, tools, handoffs, and workflow control are ordinary Python.
 
-> **About this code:** This repository accompanies a live Udacity webinar presented by [Peter Kowalchuk](https://github.com/pkowalchuk), an instructor in Udacity's [Agentic AI Nanodegree](https://www.udacity.com/course/agentic-ai--nd900). The same foundations built here from scratch — personas, memory, tools, and multi-agent workflows — are taught in depth in the program.
+> **About this code:** This repository accompanies a live Udacity webinar presented by [Peter Kowalchuk](https://github.com/pkowalchuk), an instructor in Udacity's [Agentic AI Nanodegree](https://www.udacity.com/course/agentic-ai--nd900?utm_source=github&utm_medium=agentic-ai-from-scratch-webinar). The same foundations built here from scratch — personas, memory, tools, and multi-agent workflows — are taught in depth in the program.
 
 ## What participants build
 
